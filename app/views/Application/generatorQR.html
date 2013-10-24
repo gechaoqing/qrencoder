@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QR</title>
+<link rel="shortcut icon" type="image/png" href="@{'/public/images/qr_code.png'}">
+<link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+	media="screen">
+<script src="assets/jquery/jquery-1.9.1.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/javascripts/holder.js"></script>
+<style type="text/css">
+span.colorSw{background:url(assets/images/color-swatch.png);width:32px;height:32px;display:inline-block;padding:0;margin:0}
+</style>
+<script type="text/javascript">
+	String.prototype.replaceAll = function(s1, s2) {
+		return this.replace(new RegExp(s1, "gm"), s2);
+	}
+	$(function() {
+		$("#gener")
+				.click(
+						function() {
+							var cont = $("#cont").val();
+							var size = $("#sizeSelect").val();
+							var margin= $("#marginSelect").val();
+							if (cont == "") {
+								return;
+							}
+							cont = encodeURIComponent(cont);
+							$("#qrImg")
+									.attr(
+											"src",
+											"/qrImg?contents=" + cont
+													+ "&size=" + size+"&margin="+margin)
+									.load(
+											function() {
+												if (!this.complete
+														|| typeof this.naturalWidth == "undefined"
+														|| this.naturalWidth == 0) {
+													alert('broken image!');
+												} else {
+													$(this).css({width:size,height:size}).attr("alt",
+															size + "x" + size);
+												}
+											})
+									.error(
+											function() {
+												$(this)
+														.attr(
+																"src",
+																$(this)
+																		.attr(
+																				"data-src"));
+											});
+						});
+		function setSizeSelect() {
+			for ( var i = 100; i < 800; i += 100) {
+				if (i == 300) {
+					$("#sizeSelect").append(
+							"<option value='"+i+"' selected>" + i
+									+ "px</option>");
+				} else {
+					$("#sizeSelect").append(
+							"<option value='"+i+"' >" + i + "px</option>");
+				}
+			}
+		}
+		function marginSelect(){
+			for( var i=0;i<=5;i++){
+				if (i == 4) {
+					$("#marginSelect").append(
+							"<option value='"+i+"' selected>" + (i*2)
+									+ "px</option>");
+				} else {
+					$("#marginSelect").append(
+							"<option value='"+i+"' >" + (i*2) + "px</option>");
+				}
+			}
+		}
+		setSizeSelect();
+		marginSelect();
+	});
+	function getImage(url) {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				//this.response is what you're looking for
+				//handler(this.response);
+				console.log(this.response, typeof this.response);
+				var url = window.URL = window.webkitURL;
+				$("#qrImg").attr("src", url.createObjectURL(this.response));
+			}
+		}
+		xhr.open('GET', url);
+		xhr.responseType = 'blob';
+		xhr.send();
+	}
+</script>
+</head>
+<body style="text-align: center">
+	<div style="margin: 0 auto; width: 700px; padding: 10px">
+		<div style="width: 100%; float: left">
+			<div style="float: left">
+				<textarea class="form-control" id="cont"
+					style="resize: none; width: 300px; height: 100px;"
+					placeholder="输入内容"></textarea>
+				<div style="text-align: left;">
+					<div style="width:300px;margin:10px 0;">
+						<div class="input-group">
+							<span class="input-group-addon">图片大小</span> <select
+								id="sizeSelect" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div style="width:300px;margin:10px 0;">
+						<div class="input-group">
+							<span class="input-group-addon">图片边距</span> <select
+								id="marginSelect" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div style="width:300px;margin:10px 0;">
+						<div class="input-group">
+							<span class="input-group-addon">前景色</span>
+							<button class="btn btn-default btn-lg form-control"><span class="glyphicon glyphicon-th "></span></button>
+						</div>
+					</div>
+					<div style="width:300px;margin:10px 0;">
+						<div class="input-group">
+							<span class="input-group-addon">背景色</span>
+							<button class="btn btn-default btn-lg form-control"><span class="glyphicon glyphicon-th "></span></button>
+						</div>
+					</div>
+					<button class="btn btn-default btn-info btn-sm"
+							id="gener">生成</button>
+				</div>
+			</div>
+			<div style="float: left; margin-left: 10px" class="thumbnail">
+				<img id="qrImg" data-src="assets/javascripts/holder.js/300x300"
+					alt="" src="" />
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>
