@@ -2,3 +2,4 @@
 一个生成二维码的网络应用
 <h2>二维码生成</h2>
 这里用到的二维码生成源码是zxing
+[zxing源码地址](https://code.google.com/p/zxing/)<br />  
